@@ -21,20 +21,20 @@ let format = {
 }
 
 
-function convertSort(sort){
-    if (sort){
-        let [name, dir] = sort.split(' ');
+function convertSort(orderBy){
+    if (orderBy){
+        let [name, dir] = orderBy.split(' ');
         return {[name]: dir};
     }
 }
 
 
-function convertParams({limit, offset, sort, filter}){
+function convertParams({limit, offset, where, orderBy}){
     return {
         take: limit,
         skip: offset,
-        where: convertFilter(filter, format),
-        orderBy: convertSort(sort)
+        where: convertFilter(where, format),
+        orderBy: convertSort(orderBy)
     };
 }
 
