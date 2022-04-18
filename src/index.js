@@ -4,37 +4,62 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { params, convertFilter } from "@activewidgets/options";
+import {params, convertSort, convertFilter} from "@activewidgets/options";
+import {like} from './like.js';
 
-let ops = {
+const operators = {
+
+    /* equality */
     '=': 'equals',
-    '>': 'gt',
+    '<>': 'not',
+    '!=': 'not',
+
+    /* comparison */
     '<': 'lt',
+    '>': 'gt',
+    '<=': 'lte',
     '>=': 'gte',
-    '<=': 'lte'
+
+    /* text */
+    'LIKE': 'LIKE',
+    'ILIKE': 'ILIKE',
+
+    /* logical */
+    'NOT': 'NOT',
+    'AND': 'AND',
+    'OR': 'OR'
 };
 
-let format = {
-    compare: (path, op, value) => ({
-        [path[0]]: path.length > 1 ? format.compare(path.slice(1), op, value) : {[ops[op]]: value}
-    })
+const formatting = {
+    equality: (name, operator, value) => ({[name]: {[operator]: value}}),
+    comparison: (name, operator, value) => ({[name]: {[operator]: value}}),
+    text: (name, operator, pattern) => ({[name]: like(operator, pattern)}),
+    logical: (operator, expression) => ({[operator]: expression})
+};
+
+function relations(name, value){
+    return {[name]: {is: value}};
+}
+
+function sortExpr(name, direction){
+    return {[name]: direction};
+}
+
+function mergeAll(items){
+    return items.length === 1 ? items[0] : items;
+}
+
+function nested(name, value){
+    return {[name]: value};
 }
 
 
-function convertSort(orderBy){
-    if (orderBy){
-        let [name, dir] = orderBy.split(' ');
-        return {[name]: dir};
-    }
-}
-
-
-function convertParams({limit, offset, where, orderBy}){
+function convertParams({where, orderBy, limit, offset}){
     return {
+        where: convertFilter(where, operators, formatting, relations),
+        orderBy: convertSort(orderBy, sortExpr, mergeAll, nested),
         take: limit,
-        skip: offset,
-        where: convertFilter(where, format),
-        orderBy: convertSort(orderBy)
+        skip: offset
     };
 }
 
