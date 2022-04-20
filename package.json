@@ -1,6 +1,6 @@
 {
   "name": "@activewidgets/prisma",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ActiveWidgets Prisma integration",
   "author": "ActiveWidgets SARL",
   "license": "MIT",
@@ -50,7 +50,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/activewidgets/prisma.git"
+    "url": "https://github.com/activewidgets/prisma.git"
   },
   "keywords": [
     "datagrid",
